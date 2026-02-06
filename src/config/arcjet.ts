@@ -12,12 +12,29 @@ const aj = arcjet({
       mode: 'LIVE',
       allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:PREVIEW'],
     }),
-    slidingWindow({
-      mode: 'LIVE',
-      interval: '2s',
-      max: 5,
-    }),
   ],
 });
 
-export default aj;
+export const adminClient = aj.withRule(
+  slidingWindow({
+    mode: 'LIVE',
+    interval: '1m',
+    max: 20,
+  }),
+);
+
+export const userClient = aj.withRule(
+  slidingWindow({
+    mode: 'LIVE',
+    interval: '1m',
+    max: 10,
+  }),
+);
+
+export const guestClient = aj.withRule(
+  slidingWindow({
+    mode: 'LIVE',
+    interval: '1m',
+    max: 5,
+  }),
+);
