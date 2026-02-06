@@ -8,6 +8,13 @@
       "when": 1769454323833,
       "tag": "0000_goofy_xavin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770372964349,
+      "tag": "0001_white_black_knight",
+      "breakpoints": true
     }
   ]
 }
