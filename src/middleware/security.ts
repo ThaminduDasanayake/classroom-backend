@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { ArcjetNodeRequest } from '@arcjet/node';
-import { adminClient, guestClient, userClient } from '../config/arcjet';
+import { adminClient, guestClient, userClient } from '../config/arcjet.js';
 
 const securityMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (process.env.NODE_ENV === 'test') return next();
