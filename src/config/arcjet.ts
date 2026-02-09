@@ -35,6 +35,6 @@ export const guestClient = aj.withRule(
   slidingWindow({
     mode: 'LIVE',
     interval: '1m',
-    max: 5,
+    max: 50,
   }),
 );
