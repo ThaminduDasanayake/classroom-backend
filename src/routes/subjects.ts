@@ -1,5 +1,5 @@
 import express from 'express';
-import { and, desc, eq, getTableColumns, ilike, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns, ilike, or, sql } from 'drizzle-orm';
 import { departments, subjects } from '../db/schema/index.js';
 import { db } from '../db/index.js';
 
@@ -8,7 +8,7 @@ const router = express.Router();
 // Get all subjects with optional search, filtering and pagination
 router.get('/', async (req, res) => {
   try {
-    const { search, department, page = 1, limit = 10 } = req.query;
+    const { search, department, page = 1, limit = 10, _sort, _order } = req.query;
 
     const currentPage = Math.max(1, Number(page) || 1);
     const limitPerPage = Math.max(1, Math.min(100, Number(limit) || 10));
@@ -32,6 +32,21 @@ router.get('/', async (req, res) => {
     // Combine all filters using AND if any exist
     const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
+    let sortClause = desc(subjects.createdAt);
+
+    if (_sort && _order) {
+      const sortField = _sort as string;
+      const sortOrder = _order as string;
+
+      const tableColumns = getTableColumns(subjects);
+
+      // Check if the requested field exists in the subjects table to prevent crashes
+      if (sortField in subjects) {
+        const column = tableColumns[sortField as keyof typeof tableColumns];
+        sortClause = sortOrder === 'desc' ? desc(column) : asc(column);
+      }
+    }
+
     const countResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(subjects)
@@ -40,7 +55,7 @@ router.get('/', async (req, res) => {
 
     const totalCount = countResult[0]?.count ?? 0;
 
-    const subjectSList = await db
+    const subjectsList = await db
       .select({
         ...getTableColumns(subjects),
         departments: { ...getTableColumns(departments) },
@@ -48,12 +63,12 @@ router.get('/', async (req, res) => {
       .from(subjects)
       .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause)
-      .orderBy(desc(subjects.createdAt))
+      .orderBy(sortClause, desc(subjects.id))
       .limit(limitPerPage)
       .offset(offset);
 
     res.status(200).json({
-      data: subjectSList,
+      data: subjectsList,
       pagination: {
         page: currentPage,
         limit: limitPerPage,
