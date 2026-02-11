@@ -11,7 +11,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { user } from './auth.js';
+import { user } from './auth';
 
 const timestamps = {
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -71,6 +71,7 @@ export const classes = pgTable(
 export const enrollments = pgTable(
   'enrollments',
   {
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
     studentId: text('student_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
