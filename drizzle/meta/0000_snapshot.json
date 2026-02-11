@@ -1,5 +1,5 @@
 {
-  "id": "115d117b-0069-4da5-8d82-433348e50d09",
+  "id": "d9dba7bc-0abc-4f68-843f-e73331332bc0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,7 +39,7 @@
         },
         "invite_code": {
           "name": "invite_code",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
@@ -213,7 +213,7 @@
         },
         "description": {
           "name": "description",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -356,18 +356,10 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "enrollments_student_id_class_id_pk": {
-          "name": "enrollments_student_id_class_id_pk",
-          "columns": [
-            "student_id",
-            "class_id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "enrollments_student_id_class_id_unique": {
-          "name": "enrollments_student_id_class_id_unique",
+        "enrollments_student_class_unique": {
+          "name": "enrollments_student_class_unique",
           "nullsNotDistinct": false,
           "columns": [
             "student_id",
@@ -420,7 +412,7 @@
         },
         "description": {
           "name": "description",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },

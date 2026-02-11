@@ -1,17 +1,10 @@
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'class_status') THEN
-        CREATE TYPE "public"."class_status" AS ENUM('active', 'inactive', 'archived');
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role') THEN
-        CREATE TYPE "public"."role" AS ENUM('student', 'teacher', 'admin');
-    END IF;
-END $$;
---> statement-breakpoint
+CREATE TYPE "public"."class_status" AS ENUM('active', 'inactive', 'archived');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('student', 'teacher', 'admin');--> statement-breakpoint
 CREATE TABLE "classes" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "classes_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"subject_id" integer NOT NULL,
 	"teacher_id" text NOT NULL,
-	"invite_code" text NOT NULL,
+	"invite_code" varchar(50) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"banner_cld_pub_id" text,
 	"banner_url" text,
@@ -28,7 +21,7 @@ CREATE TABLE "departments" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "departments_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"code" varchar(50) NOT NULL,
 	"name" varchar(255) NOT NULL,
-	"description" varchar(255),
+	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "departments_code_unique" UNIQUE("code")
@@ -40,8 +33,7 @@ CREATE TABLE "enrollments" (
 	"class_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "enrollments_student_id_class_id_pk" PRIMARY KEY("student_id","class_id"),
-	CONSTRAINT "enrollments_student_id_class_id_unique" UNIQUE("student_id","class_id")
+	CONSTRAINT "enrollments_student_class_unique" UNIQUE("student_id","class_id")
 );
 --> statement-breakpoint
 CREATE TABLE "subjects" (
@@ -49,7 +41,7 @@ CREATE TABLE "subjects" (
 	"department_id" integer NOT NULL,
 	"code" varchar(50) NOT NULL,
 	"name" varchar(255) NOT NULL,
-	"description" varchar(255),
+	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "subjects_code_unique" UNIQUE("code")
